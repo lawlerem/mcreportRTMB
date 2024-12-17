@@ -4,7 +4,7 @@
 \alias{mcreport}
 \title{Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective function}
 \usage{
-mcreport(obj, n = 100, sdr, parallel = 1)
+mcreport(obj, n = 100, sdr, parallel = 1, trace = TRUE)
 }
 \arguments{
 \item{obj}{The RTMB objective function.}
@@ -14,6 +14,8 @@ mcreport(obj, n = 100, sdr, parallel = 1)
 \item{sdr}{The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing or the supplied sdr does not have the joint precision matrix, sdreport is called first.}
 
 \item{parallel}{The number of samples to run in parallel. Tries to use parallel::mclapply if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply does not work on the Windows operating system.}
+
+\item{trace}{Should progress be printed?}
 }
 \value{
 A list containing the samples of each MCREPORTed variable
