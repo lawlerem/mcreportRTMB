@@ -119,5 +119,9 @@ mcreport<- function(
         }
     )
     names(mc_replicates)<- var_names
+    mc_replicates<- c(
+        list(t(par_replicates)),
+        mc_replicates
+    )
     return(mc_replicates)
 }
