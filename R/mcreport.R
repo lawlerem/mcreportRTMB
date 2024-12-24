@@ -60,17 +60,17 @@ single_mcreport<- function(obj, par = obj$env$last.par, ...) {
 #' @param n The number of samples.
 #' @param sdr The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing or the supplied sdr does not have the joint precision matrix, sdreport is called first.
 #' @param parallel The number of samples to run in parallel. Tries to use parallel::mclapply if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply does not work on the Windows operating system.
-#' @param trace Should progress be printed?
+#' @param silent Should printing of progress be suppressed?
 #' 
 #' @return A list containing the samples of each MCREPORTed variable
 #' 
 #' @export
 mcreport<- function(
         obj,
-        n = 100,
+        replicates = 100,
         sdr,
         parallel = 1,
-        trace = TRUE
+        silent = FALSE
     ) {
     need_sdr<- missing(sdr) | (
         !missing(sdr) && !("jointPrecision" %in% names(sdr))
@@ -79,7 +79,7 @@ mcreport<- function(
     par_mean<- obj$env$last.par.best
     par_cov<- solve(sdr$jointPrecision)
     par_replicates<- MASS::mvrnorm(
-        n = n,
+        n = replicates,
         mu = par_mean,
         Sigma = par_cov
     )
@@ -89,18 +89,19 @@ mcreport<- function(
         lapplyfn<- lapply
     }
     mc_replicates<- lapplyfn(
-        seq(n),
+        seq(replicates),
         function(i, ...) {
-            if( trace ) {
+            if( !silent ) {
                 cat(
                     paste0(
-                        "(",
+                        "\rGetting mcreplicate: (",
                         i,
                         " / ",
-                        n,
-                        ")\n"
+                        replicates,
+                        ")"
                     )
                 )
+                if( i == replicates ) cat("\n")
             }
             single_mcreport(obj, par_replicates[i, ])
         },
