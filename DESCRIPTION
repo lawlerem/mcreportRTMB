@@ -1,10 +1,10 @@
 Package: mcreportRTMB
-Title: What the Package Does (One Line, Title Case)
-Version: 0.1.2
+Title: Interface with RTMB to take posterior samples of derived quantities.
+Version: 0.1.3
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: Interface with RTMB to take posterior samples of derived quantities.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -15,3 +15,5 @@ Imports:
     RTMB
 Suggests: 
     parallel
+Depends: 
+    R (>= 4.1.0)

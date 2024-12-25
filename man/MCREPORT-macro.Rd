@@ -10,7 +10,8 @@ MCREPORT(x)
 \item{x}{The quantity to take samples of}
 }
 \value{
-Used for its side effects when running mcreport
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Used for its side effects when running mcreport
+}\if{html}{\out{</div>}}
 }
 \description{
 Make a quantity in an RTMB objective function available to mcreport

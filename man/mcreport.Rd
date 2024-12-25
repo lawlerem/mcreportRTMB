@@ -2,24 +2,31 @@
 % Please edit documentation in R/mcreport.R
 \name{mcreport}
 \alias{mcreport}
-\title{Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective function}
+\title{Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective
+function}
 \usage{
 mcreport(obj, replicates = 100, sdr, parallel = 1, silent = FALSE)
 }
 \arguments{
 \item{obj}{The RTMB objective function.}
 
-\item{sdr}{The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing or the supplied sdr does not have the joint precision matrix, sdreport is called first.}
+\item{sdr}{The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing
+or the supplied sdr does not have the joint precision matrix, sdreport
+is called first.}
 
-\item{parallel}{The number of samples to run in parallel. Tries to use parallel::mclapply if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply does not work on the Windows operating system.}
+\item{parallel}{The number of samples to run in parallel. Tries to use parallel::mclapply
+if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply
+does not work on the Windows operating system.}
 
 \item{silent}{Should printing of progress be suppressed?}
 
 \item{n}{The number of samples.}
 }
 \value{
-A list containing the samples of each MCREPORTed variable
+\if{html}{\out{<div class="sourceCode">}}\preformatted{A list containing the samples of each MCREPORTed variable
+}\if{html}{\out{</div>}}
 }
 \description{
-Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective function
+Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective
+function
 }

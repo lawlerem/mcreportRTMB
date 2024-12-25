@@ -1,8 +1,10 @@
 #' Make a quantity in an RTMB objective function available to mcreport
 #' 
-#' @param x The quantity to take samples of
+#' @param x 
+#'     The quantity to take samples of
 #' 
-#' @return Used for its side effects when running mcreport
+#' @return 
+#'     Used for its side effects when running mcreport
 #' 
 #' @rdname MCREPORT-macro
 #' @export
@@ -18,16 +20,11 @@ mcreporter<- function() {
     report<- function(x) {
         # nm here gives the code that was inside the MCREPORT()
         #   that was called inside the objective function
-        nm<- deparse(
-            eval(
-                substitute(
-                    substitute(
-                        x
-                    )
-                ),
-                parent.frame()
-            )
-        )
+        nm<- x |> 
+            substitute() |>
+            substitute() |>
+            eval(parent.frame()) |>
+            deparse()
         set(nm, x)
     }
     result<- function() ans
@@ -35,8 +32,12 @@ mcreporter<- function() {
     environment()
 }
 
-single_mcreport<- function(obj, par = obj$env$last.par, ...) {
-    package_env<- asNamespace("mcreportRTMB")
+single_mcreport<- function(
+        obj, 
+        par = obj$env$last.par, 
+        ...
+    ) {
+    package_env<- "mcreportRTMB" |> asNamespace()
     MCREPORT_ENV<- mcreporter()
     assignInMyNamespace(
         "internal_MCREPORT",
@@ -54,15 +55,26 @@ single_mcreport<- function(obj, par = obj$env$last.par, ...) {
     MCREPORT_ENV$result()
 }
 
-#' Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective function
+#' Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective 
+#'     function
 #' 
-#' @param obj The RTMB objective function.
-#' @param n The number of samples.
-#' @param sdr The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing or the supplied sdr does not have the joint precision matrix, sdreport is called first.
-#' @param parallel The number of samples to run in parallel. Tries to use parallel::mclapply if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply does not work on the Windows operating system.
-#' @param silent Should printing of progress be suppressed?
+#' @param obj 
+#'     The RTMB objective function.
+#' @param n 
+#'     The number of samples.
+#' @param sdr 
+#'     The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing 
+#'     or the supplied sdr does not have the joint precision matrix, sdreport 
+#'     is called first.
+#' @param parallel 
+#'     The number of samples to run in parallel. Tries to use parallel::mclapply
+#'     if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply
+#'     does not work on the Windows operating system.
+#' @param silent 
+#'     Should printing of progress be suppressed?
 #' 
-#' @return A list containing the samples of each MCREPORTed variable
+#' @return 
+#'     A list containing the samples of each MCREPORTed variable
 #' 
 #' @export
 mcreport<- function(
@@ -75,9 +87,9 @@ mcreport<- function(
     need_sdr<- missing(sdr) | (
         !missing(sdr) && !("jointPrecision" %in% names(sdr))
     )
-    if( need_sdr ) sdr<- sdreport(obj, getJointPrecision = TRUE)
+    if( need_sdr ) sdr<- obj |> sdreport(getJointPrecision = TRUE)
     par_mean<- obj$env$last.par.best
-    par_cov<- solve(sdr$jointPrecision)
+    par_cov<- sdr$jointPrecision |> solve()
     par_replicates<- MASS::mvrnorm(
         n = replicates,
         mu = par_mean,
@@ -88,41 +100,37 @@ mcreport<- function(
     } else {
         lapplyfn<- lapply
     }
-    mc_replicates<- lapplyfn(
-        seq(replicates),
-        function(i, ...) {
-            if( !silent ) {
-                cat(
-                    paste0(
-                        "\rGetting mcreplicate: (",
-                        i,
-                        " / ",
-                        replicates,
-                        ")"
+    mc_replicates<- seq(replicates) |> 
+        lapplyfn(
+            function(i, ...) {
+                if( !silent ) {
+                    cat(
+                        paste0(
+                            "\rGetting mcreplicate: (", i, " / ", replicates, ")"
+                        )
                     )
+                    if( i == replicates ) cat("\n")
+                }
+                return( obj |> single_mcreport(par_replicates[i, ]) )
+            },
+            mc.cores = parallel,
+            mc.preschedule = FALSE
+        )
+    var_names<- mc_replicates[[1]] |> names()
+    mc_replicates<- var_names |> 
+        lapply(
+            function(var) {
+                x<- abind::abind(
+                    mc_replicates |> lapply(`[[`, var),
+                    rev.along = 0
                 )
-                if( i == replicates ) cat("\n")
+                return(x)
             }
-            single_mcreport(obj, par_replicates[i, ])
-        },
-        mc.cores = parallel,
-        mc.preschedule = FALSE
-    )
-    var_names<- names(mc_replicates[[1]])
-    mc_replicates<- lapply(
-        var_names,
-        function(var) {
-            x<- abind::abind(
-                lapply(mc_replicates, `[[`, var),
-                rev.along = 0
-            )
-            return(x)
-        }
-    )
+        )
     names(mc_replicates)<- var_names
     mc_replicates<- c(
-        list(t(par_replicates)),
+        par_replicates |> t() |> list(),
         mc_replicates
     )
-    return(mc_replicates)
+    return( mc_replicates )
 }

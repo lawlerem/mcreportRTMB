@@ -4,9 +4,9 @@
 \name{mcreportRTMB-package}
 \alias{mcreportRTMB}
 \alias{mcreportRTMB-package}
-\title{mcreportRTMB: What the Package Does (One Line, Title Case)}
+\title{mcreportRTMB: Interface with RTMB to take posterior samples of derived quantities.}
 \description{
-What the package does (one paragraph).
+Interface with RTMB to take posterior samples of derived quantities.
 }
 \author{
 \strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
