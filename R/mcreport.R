@@ -60,7 +60,7 @@ single_mcreport<- function(
 #' 
 #' @param obj 
 #'     The RTMB objective function.
-#' @param n 
+#' @param replicates
 #'     The number of samples.
 #' @param sdr 
 #'     The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing 
@@ -74,7 +74,10 @@ single_mcreport<- function(
 #'     Should printing of progress be suppressed?
 #' 
 #' @return 
-#'     A list containing the samples of each MCREPORTed variable
+#'     A list containing the samples of each MCREPORTed variable.
+#'     If a variable is a vector, matrix, or array then it will be reported as
+#'         an array with dimensions c(dim(var), replicates), else it will be
+#'         returned as a list of length replicates
 #' 
 #' @export
 mcreport<- function(
@@ -120,9 +123,10 @@ mcreport<- function(
     mc_replicates<- var_names |> 
         lapply(
             function(var) {
-                x<- abind::abind(
-                    mc_replicates |> lapply(`[[`, var),
-                    rev.along = 0
+                x<- mc_replicates |> lapply(`[[`, var)
+                try(
+                    x<- x |> abind::abind(rev.along = 0),
+                    silent = TRUE
                 )
                 return(x)
             }

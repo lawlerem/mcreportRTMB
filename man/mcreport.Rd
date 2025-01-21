@@ -10,6 +10,8 @@ mcreport(obj, replicates = 100, sdr, parallel = 1, silent = FALSE)
 \arguments{
 \item{obj}{The RTMB objective function.}
 
+\item{replicates}{The number of samples.}
+
 \item{sdr}{The output of sdreport(obj, getJointPrecision = TRUE). If sdr is missing
 or the supplied sdr does not have the joint precision matrix, sdreport
 is called first.}
@@ -19,11 +21,12 @@ if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply
 does not work on the Windows operating system.}
 
 \item{silent}{Should printing of progress be suppressed?}
-
-\item{n}{The number of samples.}
 }
 \value{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{A list containing the samples of each MCREPORTed variable
+\if{html}{\out{<div class="sourceCode">}}\preformatted{A list containing the samples of each MCREPORTed variable.
+If a variable is a vector, matrix, or array then it will be reported as
+    an array with dimensions c(dim(var), replicates), else it will be
+    returned as a list of length replicates
 }\if{html}{\out{</div>}}
 }
 \description{
