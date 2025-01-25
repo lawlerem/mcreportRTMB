@@ -92,12 +92,17 @@ mcreport<- function(
     )
     if( need_sdr ) sdr<- obj |> sdreport(getJointPrecision = TRUE)
     par_mean<- obj$env$last.par.best
-    par_cov<- sdr$jointPrecision |> solve()
-    par_replicates<- MASS::mvrnorm(
-        n = replicates,
-        mu = par_mean,
-        Sigma = par_cov
-    )
+    par_jpl<- sdr$jointPrecision |> Matrix::chol()
+    par_replicates<- (replicates * length(par_mean)) |> 
+        rnorm() |>
+        matrix(nrow = length(par_mean), ncol = replicates) |>
+        Matrix::solve(
+            a = par_jpl,
+            b = _
+        ) |>
+        as.matrix()
+    par_replicates<- (par_mean + par_replicates) |> t()
+
     if( (parallel > 1) && requireNamespace("parallel", quietly = TRUE) ) {
         lapplyfn<- parallel::mclapply
     } else {
@@ -109,7 +114,8 @@ mcreport<- function(
                 if( !silent ) {
                     cat(
                         paste0(
-                            "\rGetting mcreplicate: (", i, " / ", replicates, ")"
+                            "\rGetting mcreplicate: (",
+                            i, " / ", replicates, ")"
                         )
                     )
                     if( i == replicates ) cat("\n")

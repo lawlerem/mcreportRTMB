@@ -1,6 +1,6 @@
 Package: mcreportRTMB
 Title: Interface with RTMB to take posterior samples of derived quantities.
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
