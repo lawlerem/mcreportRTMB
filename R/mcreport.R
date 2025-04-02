@@ -78,6 +78,7 @@ single_mcreport<- function(
 #'     If a variable is a vector, matrix, or array then it will be reported as
 #'         an array with dimensions c(dim(var), replicates), else it will be
 #'         returned as a list of length replicates
+#'     The first sample will be reported using the estimated parameters.
 #' 
 #' @export
 mcreport<- function(
@@ -102,6 +103,7 @@ mcreport<- function(
         ) |>
         as.matrix()
     par_replicates<- (par_mean + par_replicates) |> t()
+    par_replicates[, 1]<- par_mean
 
     if( (parallel > 1) && requireNamespace("parallel", quietly = TRUE) ) {
         lapplyfn<- parallel::mclapply
