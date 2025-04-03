@@ -88,10 +88,15 @@ mcreport<- function(
         parallel = 1,
         silent = FALSE
     ) {
-    need_sdr<- missing(sdr) | (
-        !missing(sdr) && !("jointPrecision" %in% names(sdr))
-    )
+    need_sdr<- FALSE
+    has_re<- length(obj$env$random) > 0
+    if( missing(sdr) ) {
+        need_sdr<- TRUE
+    } else if( !("jointPrecision" %in% names(sdr)) & has_re ) {
+        need_sdr<- TRUE
+    }
     if( need_sdr ) sdr<- obj |> sdreport(getJointPrecision = TRUE)
+    if( !has_re ) sdr$jointPrecision<- sdr$cov.fixed |> solve()
     par_mean<- obj$env$last.par.best
     par_jpl<- sdr$jointPrecision |> Matrix::chol()
     par_replicates<- (replicates * length(par_mean)) |> 
@@ -103,7 +108,7 @@ mcreport<- function(
         ) |>
         as.matrix()
     par_replicates<- (par_mean + par_replicates) |> t()
-    par_replicates[, 1]<- par_mean
+    par_replicates[1, ]<- par_mean
 
     if( (parallel > 1) && requireNamespace("parallel", quietly = TRUE) ) {
         lapplyfn<- parallel::mclapply
