@@ -5,7 +5,14 @@
 \title{Sample MCREPORTed quantities from the quasi-posterior of an RTMB objective
 function}
 \usage{
-mcreport(obj, replicates = 100, sdr, parallel = 1, silent = FALSE)
+mcreport(
+  obj,
+  replicates = 100,
+  sdr,
+  parallel = 1,
+  silent = FALSE,
+  pivot = FALSE
+)
 }
 \arguments{
 \item{obj}{The RTMB objective function.}
@@ -21,12 +28,15 @@ if parallal > 1, otherwise it uses lapply. Note that parallel::mclapply
 does not work on the Windows operating system.}
 
 \item{silent}{Should printing of progress be suppressed?}
+
+\item{pivot}{See Matrix::chol.}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{A list containing the samples of each MCREPORTed variable.
 If a variable is a vector, matrix, or array then it will be reported as
     an array with dimensions c(dim(var), replicates), else it will be
     returned as a list of length replicates
+The first sample will be reported using the estimated parameters.
 }\if{html}{\out{</div>}}
 }
 \description{

@@ -72,6 +72,8 @@ single_mcreport<- function(
 #'     does not work on the Windows operating system.
 #' @param silent 
 #'     Should printing of progress be suppressed?
+#' @param pivot
+#'     See Matrix::chol.
 #' 
 #' @return 
 #'     A list containing the samples of each MCREPORTed variable.
@@ -86,7 +88,8 @@ mcreport<- function(
         replicates = 100,
         sdr,
         parallel = 1,
-        silent = FALSE
+        silent = FALSE,
+        pivot = FALSE
     ) {
     need_sdr<- FALSE
     has_re<- length(obj$env$random) > 0
@@ -95,10 +98,33 @@ mcreport<- function(
     } else if( !("jointPrecision" %in% names(sdr)) & has_re ) {
         need_sdr<- TRUE
     }
-    if( need_sdr ) sdr<- obj |> sdreport(getJointPrecision = TRUE)
+    if( need_sdr ) {
+        if( !silent ) {
+            cat(
+                paste0(
+                    "\rComputing sdreport."
+                )
+            )
+        }
+        sdr<- obj |> sdreport(getJointPrecision = TRUE)
+    }
     if( !has_re ) sdr$jointPrecision<- sdr$cov.fixed |> solve()
     par_mean<- obj$env$last.par.best
-    par_jpl<- sdr$jointPrecision |> Matrix::chol()
+    if( !silent ) {
+        cat(
+            paste0(
+                "\rComputing precision cholesky decomposition."
+            )
+        )
+    }
+    par_jpl<- sdr$jointPrecision |> Matrix::chol(pivot = pivot)
+    if( !silent ) {
+        cat(
+            paste0(
+                "\rSampling parameter values."
+            )
+        )
+    }
     par_replicates<- (replicates * length(par_mean)) |> 
         rnorm() |>
         matrix(nrow = length(par_mean), ncol = replicates) |>
