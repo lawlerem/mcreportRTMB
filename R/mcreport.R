@@ -102,7 +102,7 @@ mcreport<- function(
         if( !silent ) {
             cat(
                 paste0(
-                    "\rComputing sdreport."
+                    "Computing sdreport. "
                 )
             )
         }
@@ -113,7 +113,7 @@ mcreport<- function(
     if( !silent ) {
         cat(
             paste0(
-                "\rComputing precision cholesky decomposition."
+                "Computing precision cholesky decomposition. "
             )
         )
     }
@@ -121,7 +121,7 @@ mcreport<- function(
     if( !silent ) {
         cat(
             paste0(
-                "\rSampling parameter values."
+                "Sampling parameter values.\n"
             )
         )
     }
