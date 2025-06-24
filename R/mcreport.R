@@ -1,7 +1,7 @@
 #' Make a quantity in an RTMB objective function available to mcreport
 #' 
 #' @param x 
-#'     The quantity to take samples of
+#'     The quantity of which to take samples
 #' 
 #' @return 
 #'     Used for its side effects when running mcreport
@@ -80,7 +80,7 @@ single_mcreport<- function(
 #'     If a variable is a vector, matrix, or array then it will be reported as
 #'         an array with dimensions c(dim(var), replicates), else it will be
 #'         returned as a list of length replicates
-#'     The first sample will be reported using the estimated parameters.
+#'     The first replicate will be reported using the estimated parameters.
 #' 
 #' @export
 mcreport<- function(
@@ -134,7 +134,7 @@ mcreport<- function(
         ) |>
         as.matrix()
     par_replicates<- (par_mean + par_replicates) |> t()
-    par_replicates[1, ]<- par_mean
+    par_replicates<- par_mean |> rbind(par_replicates)
 
     if( (parallel > 1) && requireNamespace("parallel", quietly = TRUE) ) {
         lapplyfn<- parallel::mclapply
