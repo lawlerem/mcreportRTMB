@@ -81,6 +81,7 @@ single_mcreport<- function(
 #'         an array with dimensions c(dim(var), replicates), else it will be
 #'         returned as a list of length replicates
 #'     The first replicate will be reported using the estimated parameters.
+#'     The first replicate will be reported using the estimated parameters.
 #' 
 #' @export
 mcreport<- function(
@@ -134,7 +135,7 @@ mcreport<- function(
         ) |>
         as.matrix()
     par_replicates<- (par_mean + par_replicates) |> t()
-    par_replicates<- par_mean |> cbind(par_replicates)
+    par_replicates<- par_mean |> rbind(par_replicates)
 
     if( (parallel > 1) && requireNamespace("parallel", quietly = TRUE) ) {
         lapplyfn<- parallel::mclapply
