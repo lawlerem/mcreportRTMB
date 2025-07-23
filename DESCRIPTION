@@ -1,6 +1,6 @@
 Package: mcreportRTMB
 Title: Interface with RTMB to take posterior samples of derived quantities.
-Version: 0.1.10
+Version: 0.1.11
 Authors@R: 
     person("Ethan", "Lawler", , "lawlerem@gmail.com", role = c("aut", "cre"))
 Description: Interface with RTMB to take posterior samples of derived quantities.
@@ -15,4 +15,4 @@ Imports:
 Suggests: 
     parallel
 Depends: 
-    R (>= 4.1.0)
+    R (>= 4.2.0)
