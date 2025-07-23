@@ -142,7 +142,7 @@ mcreport<- function(
     } else {
         lapplyfn<- lapply
     }
-    mc_replicates<- seq(replicates) |> 
+    mc_replicates<- seq(replicates + 1) |> 
         lapplyfn(
             function(i, ...) {
                 if( !silent ) {
