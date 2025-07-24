@@ -149,10 +149,10 @@ mcreport<- function(
                     cat(
                         paste0(
                             "\rGetting mcreplicate: (",
-                            i, " / ", replicates, ")"
+                            i, " / ", replicates + 1, ")"
                         )
                     )
-                    if( i == replicates ) cat("\n")
+                    if( i == (replicates + 1) ) cat("\n")
                 }
                 return( obj |> single_mcreport(par_replicates[i, ]) )
             },
