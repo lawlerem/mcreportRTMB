@@ -109,7 +109,6 @@ mcreport<- function(
         }
         sdr<- obj |> sdreport(getJointPrecision = TRUE)
     }
-    if( !has_re ) sdr$jointPrecision<- sdr$cov.fixed |> solve()
     par_mean<- obj$env$last.par.best
     if( !silent ) {
         cat(
@@ -118,7 +117,6 @@ mcreport<- function(
             )
         )
     }
-    par_jpl<- sdr$jointPrecision |> Matrix::chol(pivot = pivot)
     if( !silent ) {
         cat(
             paste0(
@@ -126,15 +124,19 @@ mcreport<- function(
             )
         )
     }
-    par_replicates<- (replicates * length(par_mean)) |> 
-        rnorm() |>
-        matrix(nrow = length(par_mean), ncol = replicates) |>
-        Matrix::solve(
-            a = par_jpl,
-            b = _
-        ) |>
-        as.matrix()
-    par_replicates<- (par_mean + par_replicates) |> t()
+    # <<< Taken from RTMB:::rgmrf0
+    if( has_re ) {
+        L<- sdr$jointPrecision |> Matrix::Cholesky(super = TRUE, LDL = FALSE)
+    } else {
+        L<- obj$he() |> 
+            Matrix::Matrix(sparse = TRUE) |> 
+            Matrix::Cholesky(super = TRUE, LDL = FALSE)
+    }
+    u<- matrix(rnorm(ncol(L) * replicates), ncol(L), replicates)
+    u<- Matrix::solve(L, u, system = "Lt")
+    u<- Matrix::solve(L, u, system = "Pt")
+    # >>>
+    par_replicates<- (par_mean + as.matrix(u)) |> t()
     par_replicates<- par_mean |> rbind(par_replicates)
 
     if( (parallel > 1) && requireNamespace("parallel", quietly = TRUE) ) {
