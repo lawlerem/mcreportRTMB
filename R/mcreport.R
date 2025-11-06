@@ -137,21 +137,20 @@ mcreport<- function(
     u<- Matrix::solve(L, u, system = "Pt")
     # >>>
     par_replicates<- (par_mean + as.matrix(u)) |> t()
-    par_replicates<- par_mean |> rbind(par_replicates)
 
     if( (parallel > 1) && requireNamespace("parallel", quietly = TRUE) ) {
         lapplyfn<- parallel::mclapply
     } else {
         lapplyfn<- lapply
     }
-    mc_replicates<- seq(replicates + 1) |> 
+    mc_replicates<- seq(replicates) |> 
         lapplyfn(
             function(i, ...) {
                 if( !silent ) {
                     cat(
                         paste0(
                             "\rGetting mcreplicate: (",
-                            i, " / ", replicates + 1, ")"
+                            i, " / ", replicates, ")"
                         )
                     )
                     if( i == (replicates + 1) ) cat("\n")
